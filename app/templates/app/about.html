@@ -1,0 +1,74 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-md-9">
+		<div data-cat="history" >
+			<h2 class="text-center">История</h2>
+			<p class="about__text">Cum eu ridens senserit, ei vis semper impedit copiosae, alienum salutatus et mel. Alia dissentias te eum, at oporteat rationibus voluptatum eum. Tollit soluta qui ei, cibo putant ea pro. Erat atomorum qualisque has et, te placerat singulis forensibus est, commune democritum has id. Ut ius ceteros ponderum gubergren.
+</p>
+		</div>
+		<div data-cat="works" class="hide">
+			<h2 class="text-center">Чем мы занимаемся?</h2>
+			<p class="about__text">Ne ancillae persecuti nam. Facer libris senserit eu vel. Eum ubique periculis ne, usu numquam appetere deterruisset ex. Dolorum iudicabit sed ea, vim accumsan forensibus in, at eam omnesque pericula.
+
+Per ad alterum nonumes suscipit, nec in mandamus maiestatis interesset, ne qui debitis definitiones. Ius ei ludus maiestatis dissentias, ferri minim ex usu, tritani volumus nec ad. In eam omnes reprimique disputationi, commodo nostrum sententiae te ius. His scaevola placerat ad, id aliquid docendi antiopam eum.</p>
+		</div>
+		<div data-cat="goods" class="hide">
+			<h2 class="text-center">Подробнее о продукции</h2>
+			<p class="about__text">Mea no legendos qualisque, in mel utroque offendit accusata. Et munere omnesque mediocrem sed. Est amet vero eu. Hinc convenire ne vim.
+
+Cum et viderer verterem voluptaria, an ipsum debet periculis mel. At qui velit periculis. Ex aperiam prompta vim. Mel praesent forensibus ad.</p>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="category">
+			<h3 class="category__title">О нас</h3>
+			<button class="btn btn-primary d-block" data-filter="history">История</button>
+			<button class="btn btn-primary d-block" data-filter="works">Чем мы занимаемся?</button>
+			<button class="btn btn-primary d-block" data-filter="goods">Подробнее о продукции</button>
+		</div>
+
+
+	</div>
+
+
+
+</div>
+
+{% endblock %}
+{% block scripts %}
+
+<script>
+	let filter = $('[data-filter]');
+
+	filter.on('click', function () {
+		let cat = $(this).data('filter');
+		$('[data-filter]').each(function () {
+			let filter_cat = $(this).data('filter');
+			if (filter_cat != cat) {
+				$(this).addClass('btn-primary');
+				$(this).removeClass('btn-success');
+			}
+			else {
+				$(this).addClass('btn-success');
+				$(this).removeClass('btn-primary');
+			}
+		});
+
+		$('[data-cat]').each(function () {
+			let item_cat = $(this).data('cat');
+			if (item_cat != cat) {
+				$(this).addClass('hide');
+			}
+			else {
+				$(this).removeClass('hide');
+			}
+		});
+	});
+
+</script>
+
+
+{% endblock %}

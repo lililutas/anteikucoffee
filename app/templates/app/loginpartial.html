@@ -1,0 +1,21 @@
+﻿{% if user.is_authenticated %}
+<form id="logoutForm" action="/logout/" method="post" class="navbar-right">
+    {% csrf_token %}
+    <ul class="nav navbar-nav navbar-right edited">
+        <li>
+            <a href="{% url 'cart' %}" class="btn mt-4 btn-lg">
+              <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Корзина  <span class="badge">{{ cart_items }}</span>
+            </a>
+        </li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+    </ul>
+</form>
+
+{% else %}
+
+<ul class="nav navbar-nav navbar-right">
+    <li><a href="{% url 'registration' %}">Регистрация</a></li>
+    <li><a href="{% url 'login' %}">Вход</a></li>
+</ul>
+
+{% endif %}
