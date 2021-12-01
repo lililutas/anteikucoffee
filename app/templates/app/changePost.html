@@ -1,0 +1,32 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h3>Изменить статью</h3>
+				<form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+					{{ blogform.as_p }}
+					<button type="submit" class="btn btn-success">Сохранить изменения</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+	$(".request__theme").val('{{ post.title }}')
+	$("#desc").val('{{ post.description }}')
+	$("#content").val('{{ post.content }}')
+
+
+            
+    </script>
+ {% endblock %}
+
+    {% load staticfiles %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>

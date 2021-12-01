@@ -529,8 +529,33 @@ input[type="checkbox"].input-validation-error {
 .mt-4 {
 	margin-top: -4px;
 }
+
+.jc-around {
+	justify-content: space-around;
+	
+}
+
+.mt-20 {
+	margin-top: 20px;
+}
 /*category*/
-
-
-
 /*/category*/
+/*Orders*/
+.cell-1 {
+	border-collapse: separate;
+	border-spacing: 0 4em;
+	background: #fff;
+	border-bottom: 5px solid transparent;
+	background-clip: padding-box;
+}
+
+thead {
+	background: #dddcdc
+}
+
+.table, th {
+	text-align: center!important;
+}
+
+
+/*/Orders*/

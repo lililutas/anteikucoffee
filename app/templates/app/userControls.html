@@ -1,0 +1,38 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="row d-flex jc-around">
+	
+	<div class="col-8">
+		<h2>{{ title }}</h2>
+	</div>
+	
+
+	<div class="col-4">
+		<a href="{% url 'newuser' %}" class="btn btn-primary btn-lg mt-20">Добавить пользователя</a>
+	</div>
+</div>
+
+	<div class="container">
+		{% for user in users reversed %}
+		<div class="row">
+			<div class="col-9">
+				<h2>Имя пользователя: {{user.username}}</h2>
+				<h4>id: {{user.id}}</h4>
+				<h4>Роль: {% for role in roles %} {% if role.user == user %} {{role.get_role_display}} {% endif %} {% endfor %}</h4>
+				<div class="row d-flex jc-around">
+					<div class="col-6">
+						<a href="{% url 'delete_user' parameter=user.id %}" class="btn btn-danger">Удалить пользователя</a>
+					</div>
+					<div class="col-6">
+						<a href="{% url 'change_user' parameter=user.id %}" class="btn btn-warning">Изменить пользователя</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor%}
+
+	</div>
+
+{% endblock %}

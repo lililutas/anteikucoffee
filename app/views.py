@@ -10,13 +10,17 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.db import models
+from django.contrib.auth.models import User
 from .models import Blog
 from .models import Comment
 from .models import Shop
 from .models import Orders
+from .models import Roles
 from .models import SubOrders
 from .forms import CommentForm
 from .forms import BlogForm
+from .forms import ProductForm
+from .forms import AddUserForm
 
 
 def home(request):
@@ -169,7 +173,7 @@ def newpost(request):
             blog_f.author = request.user
             blog_f.posted = datetime.now()
             blog_f.save()
-            return redirect('blog')
+            return redirect('blogControl')
                 
     else:
         blogform = BlogForm()
@@ -271,6 +275,38 @@ def cart(request):
         }
     ) 
 
+def myOrders(request):
+    """Renders the cart page."""
+    current_orders = Orders.objects.filter(holder=request.user).exclude(status='incart')
+        
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/myOrders.html',
+        {
+            'title':'Мои заказы',
+            'items': current_orders, 
+            'year':datetime.now().year,
+        }
+    ) 
+
+def orderDetails(request, order):
+    """Renders the order page."""
+    current_order = Orders.objects.get(id = order)
+    items = SubOrders.objects.filter(order=current_order)
+        
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/orderDetails.html',
+        {
+            'title':'Заказ',
+            'order': current_order,
+            'items': items,  
+            'year':datetime.now().year,
+        }
+    ) 
+
 def delete_item(request, item):
     current_item = SubOrders.objects.get(id = item).delete()
     return redirect(reverse('total_price'))
@@ -303,3 +339,273 @@ def deal_order(request):
     current_order.save()
     
     return redirect(reverse('shop'))
+
+def delete_order(request, item):
+    current_order = Orders.objects.get(id = item).delete()
+    return redirect(reverse('myOrders'))
+
+
+
+
+
+def total_price_order(request, order):
+    order_list = SubOrders.objects.filter(order=order)
+    current_order = Orders.objects.get(id=order)
+    current_order.total_price = 0
+    for item in order_list:
+        current_order.total_price += item.price
+
+    current_order.save()
+    return redirect(reverse('orderDetails', kwargs={'order': order}))
+
+
+def delete_item_order(request, item):
+    current_item = SubOrders.objects.get(id = item).delete()
+    current_order = request.GET.get('order')
+    return redirect(reverse('total_price_order', kwargs={'order': current_order}))
+
+def quantity_minus_order(request):
+    current_item = SubOrders.objects.filter(id = request.GET.get('item')).first()
+    current_order = request.GET.get('order')
+    current_item.quantity -= 1
+    current_item.price = current_item.product.price * current_item.quantity
+    current_item.save()
+    
+    return redirect(reverse('total_price_order', kwargs={'order': current_order}))
+
+def quantity_plus_order(request):
+    current_item = SubOrders.objects.filter(id = request.GET.get('item')).first()
+    current_order = request.GET.get('order')
+    current_item.quantity += 1
+    current_item.price = current_item.product.price * current_item.quantity
+    current_item.save()
+    
+    return redirect(reverse('total_price_order', kwargs={'order': current_order}))
+def blogControls(request):
+    """Renders the blog page."""
+    posts = Blog.objects.all()
+   
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/blogControls.html',
+        {
+            'title':'Управление блогом',
+            'posts': posts,
+            'year':datetime.now().year,
+        }
+    )
+
+
+def delete_post(request, parameter):
+    current_item = Blog.objects.get(id = parameter).delete()
+    return redirect(reverse('blogControls'))
+
+def change_post(request, parameter):
+
+    current_post = Blog.objects.get(id = parameter)
+    if request.method == 'POST':
+        blogform = BlogForm(request.POST, request.FILES)
+        if blogform.is_valid():
+            
+            
+            current_post.title = blogform.cleaned_data['title']
+            current_post.description = blogform.cleaned_data['description']
+            current_post.content = blogform.cleaned_data['content']
+            current_post.posted = datetime.now()
+            current_post.save()
+
+
+            return redirect(reverse('blogControls'))
+                
+    else:
+        blogform = BlogForm()
+
+
+    return render(
+        request,
+        'app/changePost.html',
+        {
+            'title': 'Изменить пост',
+            'post': current_post,
+            'blogform': blogform,
+            'year':datetime.now().year,
+        }
+    )
+        
+def AllOrders(request):
+    """Renders the cart page."""
+    current_orders = Orders.objects.all().exclude(status='incart')
+        
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/orders.html',
+        {
+            'title':'Заказы',
+            'items': current_orders, 
+            'year':datetime.now().year,
+        }
+    ) 
+
+
+def shopControls(request):
+    """Renders the blog page."""
+    products = Shop.objects.all()
+   
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/shopControls.html',
+        {
+            'title':'Управление товарами',
+            'products': products,
+            'year':datetime.now().year,
+        }
+    )
+
+
+def newproduct(request):
+
+    if request.method == 'POST':
+        productform = ProductForm(request.POST, request.FILES)
+        if productform.is_valid():
+            product_f = productform.save(commit=False)
+            product_f.save()
+            return redirect(reverse('shopControls'))
+                
+    else:
+        productform = ProductForm()
+        
+
+
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/newproduct.html',
+        {
+            'title': 'Новый товар',
+            'productform': productform,
+            'year':datetime.now().year,
+        }
+    )
+def delete_product(request, parameter):
+    current_item = Shop.objects.get(id = parameter).delete()
+    return redirect(reverse('shopControls'))
+
+def change_product(request, parameter):
+
+    current_product = Shop.objects.get(id = parameter)
+    if request.method == 'POST':
+        productform = ProductForm(request.POST, request.FILES)
+        if productform.is_valid():
+            
+            
+            current_product.name = productform.cleaned_data['name']
+            current_product.short = productform.cleaned_data['short']
+            current_product.text = productform.cleaned_data['text']
+            current_product.price =  productform.cleaned_data['price']
+            current_product.category =  productform.cleaned_data['category']
+            current_product.save()
+
+
+            return redirect(reverse('shopControls'))
+                
+    else:
+        productform = ProductForm()
+
+
+    return render(
+        request,
+        'app/changeProduct.html',
+        {
+            'title': 'Изменить товар',
+            'product': current_product,
+            'productform': productform,
+            'year':datetime.now().year,
+        }
+    )
+
+def userControls(request):
+    """Renders the blog page."""
+    users = User.objects.all()
+    roles = Roles.objects.all()
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/userControls.html',
+        {
+            'title':'Управление пользователями',
+            'roles': roles,
+            'users': users,
+            'year':datetime.now().year,
+        }
+    )
+
+def delete_user(request, parameter):
+    User.objects.get(id = parameter).delete()
+    return redirect(reverse('userControls'))
+
+def change_user(request, parameter):
+
+    current_user = User.objects.get(id = parameter)
+    current_role, status = Roles.objects.get_or_create(user = current_user)
+    if request.method == 'POST':
+        userform = AddUserForm(request.POST, request.FILES)
+        if userform.is_valid():
+            
+            
+            current_user.username = userform.cleaned_data['username']
+            current_user.password = userform.cleaned_data['password']
+            current_user.mail = userform.cleaned_data['mail']
+            current_user.role =  userform.cleaned_data['role']
+            current_user.save()
+
+
+            return redirect(reverse('userControls'))
+                
+    else:
+        userform = AddUserForm()
+
+
+    return render(
+        request,
+        'app/changeUser.html',
+        {
+            'title': 'Изменить пользователя',
+            'user': current_user,
+            'userform': userform,
+            'role': current_role.role,
+            'year':datetime.now().year,
+        }
+    )
+
+def newuser(request):
+
+    if request.method == 'POST':
+
+        userform = AddUserForm(request.POST, request.FILES)
+        if productform.is_valid():
+            current_user = User.objects.create_user(userform.cleaned_data['username'])
+            current_user.password = userform.cleaned_data['password']
+            current_user.mail = userform.cleaned_data['mail']
+            role, status = Roles.objects.get_or_create(user = current_user)
+            role.role =  userform.cleaned_data['role']
+            current_user.save()
+            return redirect(reverse('userControls'))
+                
+    else:
+        userform = AddUserForm()
+        
+
+
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/newuser.html',
+        {
+            'title': 'Новый пользователь',
+            'userform': userform,
+            'year':datetime.now().year,
+        }
+    )

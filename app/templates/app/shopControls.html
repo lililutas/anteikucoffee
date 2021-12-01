@@ -1,0 +1,41 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="row d-flex jc-around">
+	
+	<div class="col-8">
+		<h2>{{ title }}</h2>
+	</div>
+	
+
+	<div class="col-4">
+		<a href="{% url 'newproduct' %}" class="btn btn-primary btn-lg mt-20">Добавить товар</a>
+	</div>
+</div>
+
+	<div class="container">
+		{% for product in products reversed %}
+		<div class="row">
+			<div class="col-9">
+				<h2>{{product.name}}</h2>
+				<h4>{{product.get_category_display}}</h4>
+				<p>{{product.short}}</p>
+				<div class="row d-flex jc-around">
+					<div class="col-4">
+						<a href="#{#{% url 'blogpost' parameter=post.id %}#}" class="btn btn-primary">Подробнее</a>
+					</div>
+					<div class="col-4">
+						<a href="{% url 'delete_product' parameter=product.id %}" class="btn btn-danger">Удалить товар</a>
+					</div>
+					<div class="col-4">
+						<a href="{% url 'change_product' parameter=product.id %}" class="btn btn-warning">Изменить товар</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor%}
+
+	</div>
+
+{% endblock %}
