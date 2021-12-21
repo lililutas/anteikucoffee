@@ -69,6 +69,7 @@ urlpatterns = [
     path('newuser/', views.newuser, name='newuser'),
     path('delete_user/<int:parameter>/', views.delete_user, name='delete_user'),
     path('change_user/<int:parameter>/', views.change_user, name='change_user'),
+    path('changeStatus/', views.changeStatus, name='changeStatus'),
   
 ]
 

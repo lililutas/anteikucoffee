@@ -61,12 +61,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\templates\app\blog.html" />
+    <Content Include="app\templates\app\blogControls.html" />
     <Content Include="app\templates\app\blogpost.html" />
     <Content Include="app\templates\app\cart.html" />
+    <Content Include="app\templates\app\changePost.html" />
+    <Content Include="app\templates\app\changeProduct.html" />
+    <Content Include="app\templates\app\changeUser.html" />
+    <Content Include="app\templates\app\myOrders.html" />
     <Content Include="app\templates\app\newpost.html" />
+    <Content Include="app\templates\app\newproduct.html" />
+    <Content Include="app\templates\app\newuser.html" />
+    <Content Include="app\templates\app\orderDetails.html" />
     <Content Include="app\templates\app\pool.html" />
+    <Content Include="app\templates\app\orders.html" />
     <Content Include="app\templates\app\registration.html" />
     <Content Include="app\templates\app\shop.html" />
+    <Content Include="app\templates\app\shopControls.html" />
+    <Content Include="app\templates\app\userControls.html" />
     <Content Include="requirements.txt" />
     <Content Include="db.sqlite3" />
     <Content Include="app\static\app\content\bootstrap.css" />
