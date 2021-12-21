@@ -62,9 +62,9 @@
     <!-- Соберите навигационные ссылки, формы, и другой контент для переключения -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li {% if request.resolver_match.kwargs.parameter == 'cat1' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat1' %}">Фигурки</a></li>
-        <li {% if request.resolver_match.kwargs.parameter == 'cat2' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat2' %}">Значки</a></li>
-        <li {% if request.resolver_match.kwargs.parameter == 'cat3' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat3' %}">Постеры</a></li>
+        <li {% if request.resolver_match.kwargs.parameter == 'cat_1' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat_1' %}">Фигурки</a></li>
+        <li {% if request.resolver_match.kwargs.parameter == 'cat_2' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat_2' %}">Значки</a></li>
+        <li {% if request.resolver_match.kwargs.parameter == 'cat_3' %} class="active" {% endif %}><a href="{% url 'shop' parameter='cat_3' %}">Постеры</a></li>
       </ul>
       <form class="navbar-form navbar-left" method="GET">
         <div class="form-group">
@@ -126,10 +126,42 @@
 
                     <div class="buttons">
                         <a href="{#{% url 'products' parameter=product.id %}#}" class="btn btn-primary btn-news">Подробнее</a>
-                            <a href="{% url 'add_to_cart' %}?product={{ product.id }}" class="btn btn-success btn-buy"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span><span class="price">{{product.price}} &#8381;</span></a>
+                            <button value="{{product.id}}" class="btn btn-success btn-buy"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span><span class="price">{{product.price}} &#8381;</span></button>
                     </div>
                 </div>
         </div>
         {% endfor %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    $(".btn-buy").click(function (e) {
+        e.preventDefault();
+        // get the nickname
+        var product = $(this).val();
+        $(this).addClass('disabled');
+        // GET AJAX request
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'add_to_cart' %}",
+            data: {"product": product},
+            success: function (response) {
+                
+                if(!response["isAdded"]){
+                    alert("Произошла ошибка, попробуйте еще раз");
+                }
+               
+
+                
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        }).done((response) => {
+                        $(this).removeClass('disabled');
+                    })
+        
+    })
+</script>
+{% endblock scripts %}

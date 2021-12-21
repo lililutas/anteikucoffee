@@ -474,15 +474,16 @@ input[type="checkbox"].input-validation-error {
 	height: auto;
 }
 
-.dropdown-menu {
+.dropdown-menu.edited {
 	width: 100%;
 	background-color: #222;
 	margin-top: 4px !important;
 }
 
-	.dropdown-menu li a {
+	.dropdown-menu.edited li a {
 		color: #fff;
 	}
+
 
 .navbar-nav > .open > a {
 	background-color: inherit !important;

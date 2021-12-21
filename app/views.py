@@ -5,6 +5,7 @@ Definition of views.
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
+from django.http import JsonResponse
 from .forms import MyRequestForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
@@ -234,26 +235,28 @@ def total_price(request):
 
 def add_to_cart(request):
 
-    current_product = Shop.objects.filter(id = request.GET.get('product')).first()
-    current_order, status = Orders.objects.get_or_create(holder=request.user, status='incart')
-    if status:
-        current_order.save()
-    suborder, status = SubOrders.objects.get_or_create(order=current_order, product=current_product)
-    if status: 
-        suborder.price = suborder.product.price * suborder.quantity
-        suborder.save()
-    else:
-        suborder.quantity += 1
-        suborder.price = suborder.product.price * suborder.quantity
-        suborder.save()
-    order_list = SubOrders.objects.filter(order=current_order)
-    current_order.total_price = 0
-    for item in order_list:
-        current_order.total_price += item.price
+    if request.is_ajax and request.method == "GET":
+        current_product = Shop.objects.filter(id = request.GET.get('product')).first()
+        current_order, status = Orders.objects.get_or_create(holder=request.user, status='incart')
+        if status:
+            current_order.save()
+        suborder, status = SubOrders.objects.get_or_create(order=current_order, product=current_product)
+        if status: 
+            suborder.price = suborder.product.price * suborder.quantity
+            suborder.save()
+        else:
+            suborder.quantity += 1
+            suborder.price = suborder.product.price * suborder.quantity
+            suborder.save()
+        order_list = SubOrders.objects.filter(order=current_order)
+        current_order.total_price = 0
+        for item in order_list:
+            current_order.total_price += item.price
 
-    current_order.save()
-    assert isinstance(request, HttpRequest)
-    return redirect(reverse('shop'))
+        current_order.save()
+        return JsonResponse({'isAdded': True}, status = 200)
+
+    return JsonResponse({}, status = 400)
 
 def cart(request):
     """Renders the cart page."""
@@ -447,6 +450,15 @@ def AllOrders(request):
             'year':datetime.now().year,
         }
     ) 
+
+
+
+def changeStatus(request):
+    current_order = Orders.objects.get(id = request.GET.get('order'))
+    current_order.status = request.GET.get('status')
+    current_order.save()
+    return redirect(reverse('AllOrders'))
+    
 
 
 def shopControls(request):
