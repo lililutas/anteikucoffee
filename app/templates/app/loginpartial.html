@@ -4,7 +4,7 @@
     <ul class="nav navbar-nav navbar-right edited">
         <li>
             <a href="{% url 'cart' %}" class="btn mt-4 btn-lg">
-              <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Корзина  <span class="badge">{{ cart_items }}</span>
+              <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Корзина  <span class="badge" id="cart_count">{{ cart_items }}</span>
             </a>
         </li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>

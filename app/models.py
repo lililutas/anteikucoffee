@@ -9,6 +9,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+
+#Роли пользователей
 class Roles(models.Model):
 	ROLES = (
 		('admin', 'Администратор'),
@@ -31,7 +33,7 @@ class Roles(models.Model):
 
 
 
-
+#Новости
 class Blog(models.Model):
 	title = models.CharField(max_length = 100, unique_for_date = 'posted', verbose_name = 'Заголовок')
 	description = models.TextField(verbose_name = 'Краткое содержание')
@@ -53,7 +55,7 @@ class Blog(models.Model):
 		verbose_name_plural = 'Статьи блога'
 
 
-
+#Комментарии
 class Comment(models.Model):
 	text = models.TextField(verbose_name = 'Комментарий')
 	date = models.DateTimeField(default = datetime.now(), db_index = True, verbose_name = 'Дата')
@@ -71,7 +73,7 @@ class Comment(models.Model):
 		verbose_name_plural = 'Комментарии к статьям блога'
 
 
-
+#Товары
 class Shop(models.Model):
 	name = models.TextField(verbose_name = 'Название товара')
 	short = models.TextField(verbose_name = 'Краткое описание', max_length = 200)
@@ -94,6 +96,7 @@ class Shop(models.Model):
 		verbose_name = 'Товары'
 		verbose_name_plural = 'Товары'
 
+#Заказы
 class Orders(models.Model):
 	STATUS = (
 		('incart', 'В корзине'),
@@ -114,6 +117,7 @@ class Orders(models.Model):
 		verbose_name = 'Заказы'
 		verbose_name_plural = 'Заказы'
 
+#Детали заказа
 class SubOrders(models.Model):
 	order = models.ForeignKey(Orders, on_delete = models.CASCADE, verbose_name = 'Заказ')
 	product = models.ForeignKey(Shop, on_delete = models.CASCADE, verbose_name = 'Товар')

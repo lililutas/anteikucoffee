@@ -11,6 +11,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                {#Шапка таблицы#}
                                 <th>Заказ #</th>
                                 <th>Статус</th>
                                 <th>Стоимость</th>
@@ -23,18 +24,16 @@
                         <tbody class="table-body">
                             {% for item in items %}
                             <tr class="cell-1">
-                              
+                                {#Информация о заказе#}
                                 <td>{{item.id}}</td>
                                 <td><span class="badge badge-success">{{item.get_status_display}}</span></td>
                                 <td>{{item.total_price}}</td>
                                 <td>id{{item.holder.id}}</td>
+                                {#Кнопки управления#}
                                 <td><a href="{% url 'delete_order' item=item.id %}" class="btn btn-danger btn-xs">Отменить</a></td>
                                 <td><a href="{% url 'changeStatus' %}?order={{item.id}}&status=delivered" class="btn btn-success btn-xs {% if item.status == 'delivered' %} disabled {% endif %}">Товар доставлен</a></td>
                                 <td><a href="{% url 'orderDetails' order=item.id%}" class="btn btn-primary btn-xs">Детали заказа</a></td>
-                               
-                                
                             </tr>
-
                             {% endfor %}
                         </tbody>
                     </table>
